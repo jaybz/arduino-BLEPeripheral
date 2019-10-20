@@ -150,7 +150,8 @@ void nRF8001::begin(unsigned char advertisementDataSize,
                       BLELocalAttribute** localAttributes,
                       unsigned char numLocalAttributes,
                       BLERemoteAttribute** remoteAttributes,
-                      unsigned char numRemoteAttributes)
+                      unsigned char numRemoteAttributes,
+					  ble_gap_addr_t *gapAddress)
 {
   unsigned char numLocalPipedCharacteristics = 0;
   unsigned char numLocalPipes = 0;

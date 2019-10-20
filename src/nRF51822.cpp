@@ -11,21 +11,13 @@
   #include <ble.h>
   #include <ble_hci.h>
   #include <nrf_sdm.h>
-#elif defined(NRF52) && defined(S132) // ARDUINO_RBL_nRF52832
-  #ifndef ARDUINO_RBL_nRF52832
-    #define ARDUINO_RBL_nRF52832
-  #endif
-
-  #include <sdk/softdevice/s132/headers/nrf_ble.h>
-  #include <sdk/softdevice/s132/headers/nrf_ble_hci.h>
-  #include <sdk/softdevice/s132/headers/nrf_sdm.h>
 #else
   #include <s110/ble.h>
   #include <s110/ble_hci.h>
   #include <s110/nrf_sdm.h>
 #endif
 
-#if defined(NRF5) || defined(NRF51_S130) || defined(ARDUINO_RBL_nRF52832)
+#if defined(NRF5) || defined(NRF51_S130)
 uint32_t sd_ble_gatts_value_set(uint16_t handle, uint16_t offset, uint16_t* const p_len, uint8_t const * const p_value) {
   ble_gatts_value_t val;
 
@@ -51,15 +43,10 @@ uint32_t sd_ble_gatts_value_set(uint16_t handle, uint16_t offset, uint16_t* cons
 
 #define BLE_STACK_EVT_MSG_BUF_SIZE       (sizeof(ble_evt_t) + (GATT_MTU_SIZE_DEFAULT))
 
-#ifndef BLE_GATTS_ATTR_TAB_SIZE
-  #define BLE_GATTS_ATTR_TAB_SIZE BLE_GATTS_ATTR_TAB_SIZE_DEFAULT
-#endif
-
 nRF51822::nRF51822() :
   BLEDevice(),
 
   _advDataLen(0),
-  _hasScanData(false),
   _broadcastCharacteristic(NULL),
 
   _connectionHandle(BLE_CONN_HANDLE_INVALID),
@@ -96,7 +83,8 @@ void nRF51822::begin(unsigned char advertisementDataSize,
                       BLELocalAttribute** localAttributes,
                       unsigned char numLocalAttributes,
                       BLERemoteAttribute** remoteAttributes,
-                      unsigned char numRemoteAttributes)
+                      unsigned char numRemoteAttributes,
+					  ble_gap_addr_t *gapAddress)
 {
 
 #ifdef __RFduino__
@@ -145,7 +133,7 @@ void nRF51822::begin(unsigned char advertisementDataSize,
 
   memset(&enableParams, 0, sizeof(ble_enable_params_t));
   enableParams.common_enable_params.vs_uuid_count   = 10;
-  enableParams.gatts_enable_params.attr_tab_size    = BLE_GATTS_ATTR_TAB_SIZE;
+  enableParams.gatts_enable_params.attr_tab_size    = BLE_GATTS_ATTR_TAB_SIZE_DEFAULT;
   enableParams.gatts_enable_params.service_changed  = 1;
   enableParams.gap_enable_params.periph_conn_count  = 1;
   enableParams.gap_enable_params.central_conn_count = 0;
@@ -156,11 +144,15 @@ void nRF51822::begin(unsigned char advertisementDataSize,
   ble_enable_params_t enableParams = {
       .gatts_enable_params = {
           .service_changed = true,
-          .attr_tab_size = BLE_GATTS_ATTR_TAB_SIZE
+          .attr_tab_size = BLE_GATTS_ATTR_TAB_SIZE_DEFAULT
       }
   };
 
   sd_ble_enable(&enableParams);
+
+  if (gapAddress != NULL) {
+	sd_ble_gap_address_set(BLE_GAP_ADDR_CYCLE_MODE_NONE,gapAddress);
+  }
 #elif defined(NRF51_S130)
   ble_enable_params_t enableParams = {
       .gatts_enable_params = {
@@ -228,7 +220,6 @@ void nRF51822::begin(unsigned char advertisementDataSize,
       memcpy(&srData[srDataLen], scanData[i].data, scanData[i].length);
 
       srDataLen += scanData[i].length;
-      _hasScanData = true;
     }
   }
 
@@ -1342,7 +1333,7 @@ void nRF51822::startAdvertising() {
 
   memset(&advertisingParameters, 0x00, sizeof(advertisingParameters));
 
-  advertisingParameters.type        = this->_connectable ? BLE_GAP_ADV_TYPE_ADV_IND : ( this->_hasScanData ? BLE_GAP_ADV_TYPE_ADV_SCAN_IND : BLE_GAP_ADV_TYPE_ADV_NONCONN_IND );
+  advertisingParameters.type        = this->_connectable ? BLE_GAP_ADV_TYPE_ADV_IND : BLE_GAP_ADV_TYPE_ADV_NONCONN_IND;
   advertisingParameters.p_peer_addr = NULL;
   advertisingParameters.fp          = BLE_GAP_ADV_FP_ANY;
   advertisingParameters.p_whitelist = NULL;

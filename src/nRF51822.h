@@ -11,15 +11,6 @@
   #include <ble_gatts.h>
   #include <ble_gattc.h>
   #include <nrf_soc.h>
-#elif defined(NRF52) && defined(S132) // ARDUINO_RBL_nRF52832
-  #ifndef ARDUINO_RBL_nRF52832
-    #define ARDUINO_RBL_nRF52832
-  #endif
-  #define NRF5
-
-  #include <sdk/softdevice/s132/headers/nrf_ble_gatts.h>
-  #include <sdk/softdevice/s132/headers/nrf_ble_gattc.h>
-  #include <sdk/softdevice/s132/headers/nrf_soc.h>
 #else
   #include <s110/ble_gatts.h>
   #include <s110/ble_gattc.h>
@@ -68,7 +59,8 @@ class nRF51822 : public BLEDevice
                 BLELocalAttribute** localAttributes,
                 unsigned char numLocalAttributes,
                 BLERemoteAttribute** remoteAttributes,
-                unsigned char numRemoteAttributes);
+                unsigned char numRemoteAttributes,
+				ble_gap_addr_t *gapAddress);
 
     virtual void poll();
 
@@ -100,7 +92,6 @@ class nRF51822 : public BLEDevice
 
     unsigned char                     _advData[31];
     unsigned char                     _advDataLen;
-    bool                              _hasScanData;
     BLECharacteristic*                _broadcastCharacteristic;
 
     uint16_t                          _connectionHandle;

@@ -30,6 +30,7 @@ BLEPeripheral::BLEPeripheral(unsigned char req, unsigned char rdy, unsigned char
   _numLocalAttributes(0),
   _remoteAttributes(NULL),
   _numRemoteAttributes(0),
+  _gapAddress(NULL),
 
   _genericAccessService("1800"),
   _deviceNameCharacteristic("2a00", BLERead, 19),
@@ -161,7 +162,8 @@ void BLEPeripheral::begin() {
   this->_device->begin(advertisementDataSize, advertisementData,
                         scanData.length > 0 ? 1 : 0, &scanData,
                         this->_localAttributes, this->_numLocalAttributes,
-                        this->_remoteAttributes, this->_numRemoteAttributes);
+                        this->_remoteAttributes, this->_numRemoteAttributes,
+						this->_gapAddress);
 
   this->_device->requestAddress();
 }
@@ -201,6 +203,10 @@ bool  BLEPeripheral::setTxPower(int txPower) {
 
 void BLEPeripheral::setBondStore(BLEBondStore& bondStore) {
   this->_device->setBondStore(bondStore);
+}
+
+void BLEPeripheral::setGapAddress(ble_gap_addr_t* gapAddress) {
+  this->_gapAddress = gapAddress;
 }
 
 void BLEPeripheral::setDeviceName(const char* deviceName) {

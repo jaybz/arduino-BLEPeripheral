@@ -53,7 +53,8 @@ class nRF8001 : protected BLEDevice
                 BLELocalAttribute** localAttributes,
                 unsigned char numLocalAttributes,
                 BLERemoteAttribute** remoteAttributes,
-                unsigned char numRemoteAttributes);
+                unsigned char numRemoteAttributes,
+				ble_gap_addr_t *gapAddress);
 
     virtual void poll();
 

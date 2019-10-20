@@ -10,6 +10,7 @@
 #include "BLERemoteAttribute.h"
 #include "BLERemoteCharacteristic.h"
 #include "BLERemoteService.h"
+#include <utility/RFduino/ble_gap.h>
 
 struct BLEEirData
 {
@@ -63,7 +64,8 @@ class BLEDevice
                 BLELocalAttribute** /*localAttributes*/,
                 unsigned char /*numLocalAttributes*/,
                 BLERemoteAttribute** /*remoteAttributes*/,
-                unsigned char /*numRemoteAttributes*/) { }
+                unsigned char /*numRemoteAttributes*/,
+				ble_gap_addr_t* /*gapAddress*/) { }
 
     virtual void poll() { }
 
@@ -99,6 +101,7 @@ class BLEDevice
     bool                          _connectable;
     BLEBondStore*                 _bondStore;
     BLEDeviceEventListener*       _eventListener;
+    ble_gap_addr_t*				  _gapAddress;
 };
 
 #endif

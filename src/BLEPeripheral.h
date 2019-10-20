@@ -34,16 +34,11 @@
   #define BLE_DEFAULT_REQ   6
   #define BLE_DEFAULT_RDY   7
   #define BLE_DEFAULT_RST   4
-#elif defined(BLEND)
-  #define BLE_DEFAULT_REQ   9
-  #define BLE_DEFAULT_RDY   8
-  #define BLE_DEFAULT_RST   4
 #else
   #define BLE_DEFAULT_REQ   10
   #define BLE_DEFAULT_RDY   2
   #define BLE_DEFAULT_RST   9
 #endif
-
 
 enum BLEPeripheralEvent {
   BLEConnected = 0,
@@ -81,6 +76,7 @@ class BLEPeripheral : public BLEDeviceEventListener,
     void setBondStore(BLEBondStore& bondStore);
 
 
+	void setGapAddress(ble_gap_addr_t* gapAddress);
     void setDeviceName(const char* deviceName);
     void setAppearance(unsigned short appearance);
 
@@ -146,6 +142,7 @@ class BLEPeripheral : public BLEDeviceEventListener,
     unsigned char                  _numLocalAttributes;
     BLERemoteAttribute**           _remoteAttributes;
     unsigned char                  _numRemoteAttributes;
+    ble_gap_addr_t*                _gapAddress;
 
     BLEService                     _genericAccessService;
     BLECharacteristic              _deviceNameCharacteristic;
