@@ -1,12 +1,12 @@
 {
-  "name": "BLEPeripheral",
-  "version": "0.4.0",
+  "name": "BLEPeripheral-jaybz",
+  "version": "0.4.0-jaybz",
   "keywords": "BLE, bluetooth, peripheral",
-  "description": "Arduino library for creating custom BLE peripherals. Supports nRF8001 and nRF51822 based boards/shields.",
+  "description": "A fork of sandeepmistry's BLEPeripheral with support for setting GAP address on a BBC Micro:bit.",
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/sandeepmistry/arduino-BLEPeripheral.git"
+    "url": "https://github.com/jaybz/arduino-BLEPeripheral.git"
   },
   "frameworks": "arduino",
   "platforms": "nordicnrf51, atmelavr, atmelsam, teensy"
