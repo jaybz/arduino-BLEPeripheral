@@ -18,3 +18,9 @@ void setup() {
   blePeripheral.begin();
 }
 ```
+
+### Additional modifications
+
+Additional modifications (again, very dirty hacks) were made to add the following:
+- Support for using BLE_GAP_AD_TYPE_SERVICE_DATA_32BIT_UUID via setServiceData32BitUuid()
+- resetAdvertisingData() which resets advertising data to _serviceSolicitationUuid, _advertisedServiceUuid, _manufacturerData, and _serviceData32BitUuid.
