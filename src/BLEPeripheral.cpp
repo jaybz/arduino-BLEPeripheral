@@ -213,6 +213,73 @@ void BLEPeripheral::setServiceData32BitUuid(const unsigned char serviceData32Bit
   this->_serviceData32BitUuidLength = serviceData32BitUuidLength;
 }
 
+void BLEPeripheral::resetAdvertisingData() {
+  unsigned char advertisementDataSize = 0;
+
+  BLEEirData advertisementData[3];
+
+  unsigned char remainingAdvertisementDataLength = BLE_ADVERTISEMENT_DATA_MAX_VALUE_LENGTH + 2;
+  if (this->_serviceSolicitationUuid){
+    BLEUuid serviceSolicitationUuid = BLEUuid(this->_serviceSolicitationUuid);
+
+    unsigned char uuidLength = serviceSolicitationUuid.length();
+    advertisementData[advertisementDataSize].length = uuidLength;
+    advertisementData[advertisementDataSize].type = (uuidLength > 2) ? 0x15 : 0x14;
+
+    memcpy(advertisementData[advertisementDataSize].data, serviceSolicitationUuid.data(), uuidLength);
+    advertisementDataSize += 1;
+    remainingAdvertisementDataLength -= uuidLength + 2;
+  }
+  if (this->_advertisedServiceUuid){
+    BLEUuid advertisedServiceUuid = BLEUuid(this->_advertisedServiceUuid);
+
+    unsigned char uuidLength = advertisedServiceUuid.length();
+    if (uuidLength + 2 <= remainingAdvertisementDataLength) {
+      advertisementData[advertisementDataSize].length = uuidLength;
+      advertisementData[advertisementDataSize].type = (uuidLength > 2) ? 0x06 : 0x02;
+
+      memcpy(advertisementData[advertisementDataSize].data, advertisedServiceUuid.data(), uuidLength);
+      advertisementDataSize += 1;
+      remainingAdvertisementDataLength -= uuidLength + 2;
+    }
+  }
+  if (this->_manufacturerData && this->_manufacturerDataLength > 0) {
+    if (remainingAdvertisementDataLength >= 3) {
+      unsigned char dataLength = this->_manufacturerDataLength;
+
+      if (dataLength + 2 > remainingAdvertisementDataLength) {
+        dataLength = remainingAdvertisementDataLength - 2;
+      }
+
+      advertisementData[advertisementDataSize].length = dataLength;
+      advertisementData[advertisementDataSize].type = 0xff;
+
+      memcpy(advertisementData[advertisementDataSize].data, this->_manufacturerData, dataLength);
+      advertisementDataSize += 1;
+      remainingAdvertisementDataLength -= dataLength + 2;
+    }
+  }
+  
+  if(this->_serviceData32BitUuid && this->_serviceData32BitUuidLength > 0) {
+    if (remainingAdvertisementDataLength >= 3) {
+      unsigned char dataLength = this->_serviceData32BitUuidLength;
+
+      if (dataLength + 2 > remainingAdvertisementDataLength) {
+        dataLength = remainingAdvertisementDataLength - 2;
+      }
+
+      advertisementData[advertisementDataSize].length = dataLength;
+      advertisementData[advertisementDataSize].type = 0x20;
+
+      memcpy(advertisementData[advertisementDataSize].data, this->_serviceData32BitUuid, dataLength);
+      advertisementDataSize += 1;
+      remainingAdvertisementDataLength -= dataLength + 2;
+    }
+  }
+  
+  this->_device->resetAdvertisingData(advertisementDataSize, advertisementData);
+}
+
 void BLEPeripheral::setLocalName(const char* localName) {
   this->_localName = localName;
 }
@@ -221,7 +288,7 @@ void BLEPeripheral::setConnectable(bool connectable) {
   this->_device->setConnectable(connectable);
 }
 
-bool  BLEPeripheral::setTxPower(int txPower) {
+bool BLEPeripheral::setTxPower(int txPower) {
   return this->_device->setTxPower(txPower);
 }
 

@@ -70,6 +70,7 @@ class nRF51822 : public BLEDevice
     virtual void startAdvertising();
     virtual void disconnect();
 
+	virtual void resetAdvertisingData(unsigned char advertisementDataSize, BLEEirData *advertisementData);
     virtual bool updateCharacteristicValue(BLECharacteristic& characteristic);
     virtual bool broadcastCharacteristic(BLECharacteristic& characteristic);
     virtual bool canNotifyCharacteristic(BLECharacteristic& characteristic);

@@ -76,6 +76,7 @@ class BLEDevice
     virtual void startAdvertising() { }
     virtual void disconnect() { }
 
+	virtual void resetAdvertisingData(unsigned char advertisementDataSize, BLEEirData *advertisementData) { }	
     virtual bool updateCharacteristicValue(BLECharacteristic& /*characteristic*/) { return false; }
     virtual bool broadcastCharacteristic(BLECharacteristic& /*characteristic*/) { return false; }
     virtual bool canNotifyCharacteristic(BLECharacteristic& /*characteristic*/) { return false; }

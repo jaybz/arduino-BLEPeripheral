@@ -1036,6 +1036,31 @@ void nRF51822::end() {
   this->_numRemoteCharacteristics = 0;
 }
 
+void nRF51822::resetAdvertisingData(unsigned char advertisementDataSize, BLEEirData *advertisementData) {
+  this->_advDataLen = 0;
+
+  // flags
+  this->_advData[this->_advDataLen + 0] = 2;
+  this->_advData[this->_advDataLen + 1] = 0x01;
+  this->_advData[this->_advDataLen + 2] = 0x06;
+
+  this->_advDataLen += 3;
+
+  if (advertisementDataSize && advertisementData) {
+    for (int i = 0; i < advertisementDataSize; i++) {
+      this->_advData[this->_advDataLen + 0] = advertisementData[i].length + 1;
+      this->_advData[this->_advDataLen + 1] = advertisementData[i].type;
+      this->_advDataLen += 2;
+
+      memcpy(&this->_advData[this->_advDataLen], advertisementData[i].data, advertisementData[i].length);
+
+      this->_advDataLen += advertisementData[i].length;
+    }
+  }
+  
+  sd_ble_gap_adv_data_set(this->_advData, this->_advDataLen, NULL, 0);
+}
+
 bool nRF51822::updateCharacteristicValue(BLECharacteristic& characteristic) {
   bool success = true;
 
