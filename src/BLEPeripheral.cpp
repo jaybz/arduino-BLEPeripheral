@@ -24,6 +24,8 @@ BLEPeripheral::BLEPeripheral(unsigned char req, unsigned char rdy, unsigned char
   _serviceSolicitationUuid(NULL),
   _manufacturerData(NULL),
   _manufacturerDataLength(0),
+  _serviceData32BitUuid(NULL),
+  _serviceData32BitUuidLength(0),
   _localName(NULL),
 
   _localAttributes(NULL),
@@ -118,6 +120,23 @@ void BLEPeripheral::begin() {
       remainingAdvertisementDataLength -= dataLength + 2;
     }
   }
+  
+  if(this->_serviceData32BitUuid && this->_serviceData32BitUuidLength > 0) {
+    if (remainingAdvertisementDataLength >= 3) {
+      unsigned char dataLength = this->_serviceData32BitUuidLength;
+
+      if (dataLength + 2 > remainingAdvertisementDataLength) {
+        dataLength = remainingAdvertisementDataLength - 2;
+      }
+
+      advertisementData[advertisementDataSize].length = dataLength;
+      advertisementData[advertisementDataSize].type = 0x20;
+
+      memcpy(advertisementData[advertisementDataSize].data, this->_serviceData32BitUuid, dataLength);
+      advertisementDataSize += 1;
+      remainingAdvertisementDataLength -= dataLength + 2;
+    }
+  }
 
   if (this->_localName){
     unsigned char localNameLength = strlen(this->_localName);
@@ -187,6 +206,11 @@ void BLEPeripheral::setServiceSolicitationUuid(const char* serviceSolicitationUu
 void BLEPeripheral::setManufacturerData(const unsigned char manufacturerData[], unsigned char manufacturerDataLength) {
   this->_manufacturerData = manufacturerData;
   this->_manufacturerDataLength = manufacturerDataLength;
+}
+
+void BLEPeripheral::setServiceData32BitUuid(const unsigned char serviceData32BitUuid[], unsigned char serviceData32BitUuidLength) {
+  this->_serviceData32BitUuid = serviceData32BitUuid;
+  this->_serviceData32BitUuidLength = serviceData32BitUuidLength;
 }
 
 void BLEPeripheral::setLocalName(const char* localName) {

@@ -65,6 +65,7 @@ class BLEPeripheral : public BLEDeviceEventListener,
     void setAdvertisedServiceUuid(const char* advertisedServiceUuid);
     void setServiceSolicitationUuid(const char* serviceSolicitationUuid);
     void setManufacturerData(const unsigned char manufacturerData[], unsigned char manufacturerDataLength);
+    void setServiceData32BitUuid(const unsigned char serviceData32BitUuid[], unsigned char serviceData32BitUuidLength);
     void setLocalName(const char *localName);
 
     void setAdvertisingInterval(unsigned short advertisingInterval);
@@ -136,6 +137,8 @@ class BLEPeripheral : public BLEDeviceEventListener,
     const char*                    _serviceSolicitationUuid;
     const unsigned char*           _manufacturerData;
     unsigned char                  _manufacturerDataLength;
+    const unsigned char*           _serviceData32BitUuid;
+    unsigned char                  _serviceData32BitUuidLength;
     const char*                    _localName;
 
     BLELocalAttribute**            _localAttributes;
