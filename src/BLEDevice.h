@@ -54,6 +54,7 @@ class BLEDevice
 
     void setAdvertisingInterval(unsigned short advertisingInterval);
     void setConnectionInterval(unsigned short minimumConnectionInterval, unsigned short maximumConnectionInterval);
+    void setConnectionParams(unsigned short  minimumConnectionInterval, unsigned short maximumConnectionInterval, unsigned short slaveLatency, unsigned short connectionSupervisionTimeout);
     void setConnectable(bool connectable);
     void setBondStore(BLEBondStore& bondStore);
 
@@ -99,6 +100,8 @@ class BLEDevice
     unsigned short                _advertisingInterval;
     unsigned short                _minimumConnectionInterval;
     unsigned short                _maximumConnectionInterval;
+	unsigned short                _slaveLatency;
+	unsigned short                _connectionSupervisionTimeout;
     bool                          _connectable;
     BLEBondStore*                 _bondStore;
     BLEDeviceEventListener*       _eventListener;

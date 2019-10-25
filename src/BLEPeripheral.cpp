@@ -338,6 +338,10 @@ void BLEPeripheral::setConnectionInterval(unsigned short minimumConnectionInterv
   this->_device->setConnectionInterval(minimumConnectionInterval, maximumConnectionInterval);
 }
 
+void BLEPeripheral::setConnectionParams(unsigned short minimumConnectionInterval, unsigned short maximumConnectionInterval, unsigned short slaveLatency, unsigned short connectionSupervisionTimeout) {
+  this->_device->setConnectionParams(minimumConnectionInterval, maximumConnectionInterval, slaveLatency, connectionSupervisionTimeout);
+}
+
 void BLEPeripheral::disconnect() {
   this->_device->disconnect();
 }

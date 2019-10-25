@@ -73,6 +73,7 @@ class BLEPeripheral : public BLEDeviceEventListener,
     // connection intervals in 1.25 ms increments,
     // must be between  0x0006 (7.5 ms) and 0x0c80 (4 s), values outside of this range will be ignored
     void setConnectionInterval(unsigned short minimumConnectionInterval, unsigned short maximumConnectionInterval);
+	void setConnectionParams(unsigned short minimumConnectionInterval, unsigned short maximumConnectionInterval, unsigned short slaveLatency, unsigned short connectionSupervisionTimeout);
     bool setTxPower(int txPower);
     void setConnectable(bool connectable);
     void setBondStore(BLEBondStore& bondStore);

@@ -10,8 +10,10 @@
 
 BLEDevice::BLEDevice() :
   _advertisingInterval(DEFAULT_ADVERTISING_INTERVAL),
-  _minimumConnectionInterval(0),
-  _maximumConnectionInterval(0),
+  _minimumConnectionInterval(40),
+  _maximumConnectionInterval(80),
+  _slaveLatency(0),
+  _connectionSupervisionTimeout(400),
   _connectable(DEFAULT_CONNECTABLE),
   _bondStore(NULL),
   _eventListener(NULL),
@@ -37,6 +39,17 @@ void BLEDevice::setConnectionInterval(unsigned short minimumConnectionInterval, 
 
   this->_minimumConnectionInterval = minimumConnectionInterval;
   this->_maximumConnectionInterval = maximumConnectionInterval;
+}
+
+void BLEDevice::setConnectionParams(unsigned short  minimumConnectionInterval, unsigned short maximumConnectionInterval, unsigned short slaveLatency, unsigned short connectionSupervisionTimeout) {
+  if (maximumConnectionInterval < minimumConnectionInterval) {
+    maximumConnectionInterval = minimumConnectionInterval;
+  }
+
+  this->_minimumConnectionInterval = minimumConnectionInterval;
+  this->_maximumConnectionInterval = maximumConnectionInterval;
+  this->_slaveLatency = slaveLatency;
+  this->_connectionSupervisionTimeout = connectionSupervisionTimeout;
 }
 
 void BLEDevice::setConnectable(bool connectable) {
