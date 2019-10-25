@@ -24,3 +24,6 @@ void setup() {
 Additional modifications (again, very dirty hacks) were made to add the following:
 - Support for using BLE_GAP_AD_TYPE_SERVICE_DATA_32BIT_UUID via setServiceData32BitUuid()
 - resetAdvertisingData() which resets advertising data to _serviceSolicitationUuid, _advertisedServiceUuid, _manufacturerData, and _serviceData32BitUuid.
+- Fix setConnectionInterval so that it actually works
+- Add setConnectionParams as an alternative to setConnectionInterval that includes additional parameters
+- Support for BLE_GATTS_OP_EXEC_WRITE_REQ_NOW
