@@ -96,6 +96,7 @@ class nRF51822 : public BLEDevice
     BLECharacteristic*                _broadcastCharacteristic;
 
     uint16_t                          _connectionHandle;
+	uint8_t                           _userMemory[BLE_ATTRIBUTE_MAX_VALUE_LENGTH];
 #if defined(NRF5) || defined(NRF51_S130)
     uint8_t                           _bondData[((sizeof(ble_gap_enc_key_t) + 3) / 4) * 4]  __attribute__ ((__aligned__(4)));
     ble_gap_enc_key_t*                _encKey;

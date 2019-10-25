@@ -521,6 +521,17 @@ void nRF51822::poll() {
 
   if (sd_ble_evt_get((uint8_t*)evtBuf, &evtLen) == NRF_SUCCESS) {
     switch (bleEvt->header.evt_id) {
+      case BLE_EVT_USER_MEM_REQUEST: {
+		  ble_user_mem_block_t block;
+		  block.p_mem = this->_userMemory;
+		  block.len = BLE_ATTRIBUTE_MAX_VALUE_LENGTH;
+		  sd_ble_user_mem_reply(this->_connectionHandle, (const ble_user_mem_block_t*)&block);
+	    }
+		break;
+
+      case BLE_EVT_USER_MEM_RELEASE: // no need to do anything since user memory is not dynamically allocated at the moment
+		break;
+
       case BLE_EVT_TX_COMPLETE:
 #ifdef NRF_51822_DEBUG
         Serial.print(F("Evt TX complete "));
@@ -781,34 +792,64 @@ void nRF51822::poll() {
 
         BLEUtil::printBuffer(bleEvt->evt.gatts_evt.params.write.data, bleEvt->evt.gatts_evt.params.write.len);
 #endif
+		uint8_t *data = bleEvt->evt.gatts_evt.params.write.data;
+		uint16_t len = bleEvt->evt.gatts_evt.params.write.len;
+		uint16_t handle = bleEvt->evt.gatts_evt.params.write.handle;
+		uint8_t value[BLE_ATTRIBUTE_MAX_VALUE_LENGTH]; // used only for BLE_GATTS_OP_EXEC_WRITE_REQ_NOW
+		
+		if (bleEvt->evt.gatts_evt.params.write.op == BLE_GATTS_OP_EXEC_WRITE_REQ_NOW) {
+			Serial.print("BLE_GATTS_OP_EXEC_WRITE_REQ_NOW: ");
+			Serial.println(bleEvt->evt.gatts_evt.params.write.offset, DEC);
 
-        uint16_t handle = bleEvt->evt.gatts_evt.params.write.handle;
+			uint16_t readOffset = bleEvt->evt.gatts_evt.params.write.offset;
+			uint16_t writeOffset = 0;
+			data = value;
+			len = 0;
+			
+			memcpy(&handle, this->_userMemory + readOffset, 2);
+			readOffset += 2;
+			uint16_t nextHandle = handle;
+			while(nextHandle == handle) {
+				uint16_t size = 0;
+				memcpy(&writeOffset, this->_userMemory + readOffset, 2);
+				readOffset += 2;
+				memcpy(&size, this->_userMemory + readOffset, 2);
+				readOffset += 2;
+				memcpy(value + writeOffset, this->_userMemory + readOffset, size);
+				readOffset += size;
+				len += size;
+				memcpy(&nextHandle, this->_userMemory + readOffset, 2);
+				readOffset += 2;
+			}
+#ifdef NRF_51822_DEBUG
+			BLEUtil::printBuffer(value, len);
+#endif
+		}
+		
+		for (int i = 0; i < this->_numLocalCharacteristics; i++) {
+		  struct localCharacteristicInfo* localCharacteristicInfo = &this->_localCharacteristicInfo[i];
 
-        for (int i = 0; i < this->_numLocalCharacteristics; i++) {
-          struct localCharacteristicInfo* localCharacteristicInfo = &this->_localCharacteristicInfo[i];
+		  if (localCharacteristicInfo->handles.value_handle == handle) {
+			if (this->_eventListener) {
+			  this->_eventListener->BLEDeviceCharacteristicValueChanged(*this, *localCharacteristicInfo->characteristic, data, len);
+			}
+			break;
+		  } else if (localCharacteristicInfo->handles.cccd_handle == handle) {
+			uint16_t value = data[0] | (data[1] << 8);
 
-          if (localCharacteristicInfo->handles.value_handle == handle) {
-            if (this->_eventListener) {
-              this->_eventListener->BLEDeviceCharacteristicValueChanged(*this, *localCharacteristicInfo->characteristic, bleEvt->evt.gatts_evt.params.write.data, bleEvt->evt.gatts_evt.params.write.len);
-            }
-            break;
-          } else if (localCharacteristicInfo->handles.cccd_handle == handle) {
-            uint8_t* data  = &bleEvt->evt.gatts_evt.params.write.data[0];
-            uint16_t value = data[0] | (data[1] << 8);
+			localCharacteristicInfo->notifySubscribed = (value & 0x0001);
+			localCharacteristicInfo->indicateSubscribed = (value & 0x0002);
 
-            localCharacteristicInfo->notifySubscribed = (value & 0x0001);
-            localCharacteristicInfo->indicateSubscribed = (value & 0x0002);
+			bool subscribed = (localCharacteristicInfo->notifySubscribed || localCharacteristicInfo->indicateSubscribed);
 
-            bool subscribed = (localCharacteristicInfo->notifySubscribed || localCharacteristicInfo->indicateSubscribed);
-
-            if (subscribed != localCharacteristicInfo->characteristic->subscribed()) {
-              if (this->_eventListener) {
-                this->_eventListener->BLEDeviceCharacteristicSubscribedChanged(*this, *localCharacteristicInfo->characteristic, subscribed);
-              }
-              break;
-            }
-          }
-        }
+			if (subscribed != localCharacteristicInfo->characteristic->subscribed()) {
+			  if (this->_eventListener) {
+				this->_eventListener->BLEDeviceCharacteristicSubscribedChanged(*this, *localCharacteristicInfo->characteristic, subscribed);
+			  }
+			  break;
+			}
+		  }
+		}
         break;
       }
 
