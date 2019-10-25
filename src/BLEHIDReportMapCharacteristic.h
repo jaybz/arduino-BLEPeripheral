@@ -14,8 +14,8 @@ class BLEHIDReportMapCharacteristic : public BLEConstantCharacteristic
   public:
     BLEHIDReportMapCharacteristic();
 
-    virtual unsigned char valueSize() const;
-    virtual unsigned char valueLength() const;
+    virtual uint16_t valueSize() const;
+    virtual uint16_t valueLength() const;
     virtual unsigned char operator[] (int offset) const;
 
     void setHids(BLEHID** hids, unsigned char numHids);

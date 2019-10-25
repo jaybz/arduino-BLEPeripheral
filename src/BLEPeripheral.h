@@ -113,7 +113,7 @@ class BLEPeripheral : public BLEDeviceEventListener,
     virtual void BLEDeviceBonded(BLEDevice& device);
     virtual void BLEDeviceRemoteServicesDiscovered(BLEDevice& device);
 
-    virtual void BLEDeviceCharacteristicValueChanged(BLEDevice& device, BLECharacteristic& characteristic, const unsigned char* value, unsigned char valueLength);
+    virtual void BLEDeviceCharacteristicValueChanged(BLEDevice& device, BLECharacteristic& characteristic, const unsigned char* value, uint16_t valueLength);
     virtual void BLEDeviceCharacteristicSubscribedChanged(BLEDevice& device, BLECharacteristic& characteristic, bool subscribed);
 
     virtual void BLEDeviceRemoteCharacteristicValueChanged(BLEDevice& device, BLERemoteCharacteristic& remoteCharacteristic, const unsigned char* value, unsigned char valueLength);

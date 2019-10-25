@@ -5,6 +5,7 @@
 #define _BLE_CHARACTERISTIC_H_
 
 #include "BLELocalAttribute.h"
+#include "Arduino.h"
 
 enum BLECharacteristicEvent {
   BLEWritten = 0,
@@ -31,21 +32,21 @@ class BLECharacteristic : public BLELocalAttribute
   friend class BLEPeripheral;
 
   public:
-    BLECharacteristic(const char* uuid, unsigned char properties, unsigned char valueSize);
+    BLECharacteristic(const char* uuid, unsigned char properties, uint16_t valueSize);
     BLECharacteristic(const char* uuid, unsigned char properties, const char* value);
 
     virtual ~BLECharacteristic();
 
     unsigned char properties() const;
 
-    virtual unsigned char valueSize() const;
+    virtual uint16_t valueSize() const;
     virtual const unsigned char* value() const;
-    virtual unsigned char valueLength() const;
+    virtual uint16_t valueLength() const;
     virtual unsigned char operator[] (int offset) const;
 
     virtual bool fixedLength() const;
 
-    virtual bool setValue(const unsigned char value[], unsigned char length);
+    virtual bool setValue(const unsigned char value[], uint16_t length);
     virtual bool setValue(const char* value);
 
     bool broadcast();
@@ -63,9 +64,9 @@ class BLECharacteristic : public BLELocalAttribute
 
     void setValueChangeListener(BLECharacteristicValueChangeListener& listener);
 
-    unsigned char                         _valueSize;
+    uint16_t                              _valueSize;
     unsigned char*                        _value;
-    unsigned char                         _valueLength;
+    uint16_t                              _valueLength;
 
   private:
     unsigned char                         _properties;

@@ -8,8 +8,8 @@ BLEHIDReportMapCharacteristic::BLEHIDReportMapCharacteristic() :
 
 }
 
-unsigned char BLEHIDReportMapCharacteristic::valueSize() const {
-  unsigned char valueSize = 0;
+uint16_t BLEHIDReportMapCharacteristic::valueSize() const {
+  uint16_t valueSize = 0;
 
   for (unsigned char i = 0; i < this->_numHids; i++) {
     valueSize += this->_hids[i]->getDescriptorLength();
@@ -18,7 +18,7 @@ unsigned char BLEHIDReportMapCharacteristic::valueSize() const {
   return valueSize;
 }
 
-unsigned char BLEHIDReportMapCharacteristic::valueLength() const {
+uint16_t BLEHIDReportMapCharacteristic::valueLength() const {
   return this->valueSize();
 }
 

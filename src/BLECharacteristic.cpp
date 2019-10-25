@@ -7,7 +7,7 @@
 
 #include "BLECharacteristic.h"
 
-BLECharacteristic::BLECharacteristic(const char* uuid, unsigned char properties, unsigned char valueSize) :
+BLECharacteristic::BLECharacteristic(const char* uuid, unsigned char properties, uint16_t valueSize) :
   BLELocalAttribute(uuid, BLETypeCharacteristic),
   _valueSize(min(valueSize, BLE_ATTRIBUTE_MAX_VALUE_LENGTH)),
   _value(NULL),
@@ -50,7 +50,7 @@ unsigned char BLECharacteristic::properties() const {
   return this->_properties;
 }
 
-unsigned char BLECharacteristic::valueSize() const {
+uint16_t BLECharacteristic::valueSize() const {
   return this->_valueSize;
 }
 
@@ -58,7 +58,7 @@ unsigned const char* BLECharacteristic::value() const {
   return this->_value;
 }
 
-unsigned char BLECharacteristic::valueLength() const {
+uint16_t BLECharacteristic::valueLength() const {
   return this->_valueLength;
 }
 
@@ -70,7 +70,7 @@ unsigned char BLECharacteristic::operator[] (int offset) const {
   return this->_value[offset];
 }
 
-bool BLECharacteristic::setValue(const unsigned char value[], unsigned char length) {
+bool BLECharacteristic::setValue(const unsigned char value[], uint16_t length) {
   bool success = true;
 
   this->_valueLength = min(length, this->_valueSize);
