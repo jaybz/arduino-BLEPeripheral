@@ -179,10 +179,10 @@ void nRF51822::begin(unsigned char advertisementDataSize,
 
   ble_gap_conn_params_t gap_conn_params;
 
-  gap_conn_params.min_conn_interval = 40;  // in 1.25ms units
-  gap_conn_params.max_conn_interval = 80;  // in 1.25ms unit
-  gap_conn_params.slave_latency     = 0;
-  gap_conn_params.conn_sup_timeout  = 4000 / 10; // in 10ms unit
+  gap_conn_params.min_conn_interval = _minimumConnectionInterval;  // in 1.25ms units
+  gap_conn_params.max_conn_interval = _maximumConnectionInterval;  // in 1.25ms unit
+  gap_conn_params.slave_latency     = _slaveLatency;
+  gap_conn_params.conn_sup_timeout  = _connectionSupervisionTimeout; // in 10ms unit
 
   sd_ble_gap_ppcp_set(&gap_conn_params);
   sd_ble_gap_tx_power_set(0);
@@ -563,8 +563,8 @@ void nRF51822::poll() {
 
           gap_conn_params.min_conn_interval = this->_minimumConnectionInterval;  // in 1.25ms units
           gap_conn_params.max_conn_interval = this->_maximumConnectionInterval;  // in 1.25ms unit
-          gap_conn_params.slave_latency     = 0;
-          gap_conn_params.conn_sup_timeout  = 4000 / 10; // in 10ms unit
+          gap_conn_params.slave_latency     = this->_slaveLatency;
+          gap_conn_params.conn_sup_timeout  = this->_connectionSupervisionTimeout;
 
           sd_ble_gap_conn_param_update(this->_connectionHandle, &gap_conn_params);
         }
