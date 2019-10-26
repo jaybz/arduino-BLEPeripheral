@@ -798,8 +798,10 @@ void nRF51822::poll() {
 		uint8_t value[BLE_ATTRIBUTE_MAX_VALUE_LENGTH]; // used only for BLE_GATTS_OP_EXEC_WRITE_REQ_NOW
 		
 		if (bleEvt->evt.gatts_evt.params.write.op == BLE_GATTS_OP_EXEC_WRITE_REQ_NOW) {
+#ifdef NRF_51822_DEBUG
 			Serial.print("BLE_GATTS_OP_EXEC_WRITE_REQ_NOW: ");
 			Serial.println(bleEvt->evt.gatts_evt.params.write.offset, DEC);
+#endif
 
 			uint16_t readOffset = bleEvt->evt.gatts_evt.params.write.offset;
 			uint16_t writeOffset = 0;
