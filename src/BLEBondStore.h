@@ -6,10 +6,10 @@ class BLEBondStore
   public:
     BLEBondStore(int offset = 0);
 
-    bool hasData();
-    void clearData();
-    void putData(const unsigned char* data, unsigned int offset, unsigned int length);
-    void getData(unsigned char* data, unsigned int offset, unsigned int length);
+    virtual bool hasData();
+    virtual void clearData();
+    virtual void putData(const unsigned char* data, unsigned int offset, unsigned int length);
+    virtual void getData(unsigned char* data, unsigned int offset, unsigned int length);
 
   private:
 #if defined(__AVR__) || defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MKL26Z64__)
