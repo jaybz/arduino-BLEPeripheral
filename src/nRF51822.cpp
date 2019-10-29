@@ -140,6 +140,9 @@ void nRF51822::begin(unsigned char advertisementDataSize,
   enableParams.gap_enable_params.central_sec_count  = 0;
 
   sd_ble_enable(&enableParams, &app_ram_base);
+  if (gapAddress != NULL) {
+	sd_ble_gap_address_set(BLE_GAP_ADDR_CYCLE_MODE_NONE,gapAddress);
+  }
 #elif defined(S110)
   ble_enable_params_t enableParams = {
       .gatts_enable_params = {
@@ -161,6 +164,9 @@ void nRF51822::begin(unsigned char advertisementDataSize,
   };
 
   sd_ble_enable(&enableParams);
+  if (gapAddress != NULL) {
+	sd_ble_gap_address_set(BLE_GAP_ADDR_CYCLE_MODE_NONE,gapAddress);
+  }
 #endif
 
 #ifdef NRF_51822_DEBUG
