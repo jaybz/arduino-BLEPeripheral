@@ -95,7 +95,7 @@ void nRF51822::begin(unsigned char advertisementDataSize,
       .source        = NRF_CLOCK_LF_SRC_RC,
       .rc_ctiv       = 8, //16
       .rc_temp_ctiv  = 2,
-      .xtal_accuracy = NRF_CLOCK_LF_XTAL_ACCURACY_250_PPM
+      .xtal_accuracy = NRF_CLOCK_LF_XTAL_ACCURACY_500_PPM
     };
   #elif defined(USE_LFSYNT)
     nrf_clock_lf_cfg_t cfg = {
