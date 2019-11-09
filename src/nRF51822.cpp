@@ -1135,15 +1135,8 @@ bool nRF51822::updateCharacteristicValue(BLECharacteristic& characteristic) {
       hvxParams.p_len  = &valueLength;
 
       if (localCharacteristicInfo->notifySubscribed) {
-        if (this->_txBufferCount > 0) {
-          this->_txBufferCount--;
-
-          hvxParams.type = BLE_GATT_HVX_NOTIFICATION;
-
-          sd_ble_gatts_hvx(this->_connectionHandle, &hvxParams);
-        } else {
-          success = false;
-        }
+        hvxParams.type = BLE_GATT_HVX_NOTIFICATION;
+        success = sd_ble_gatts_hvx(this->_connectionHandle, &hvxParams) == NRF_SUCCESS;
       }
 
       if (localCharacteristicInfo->indicateSubscribed) {
@@ -1206,7 +1199,7 @@ bool nRF51822::canNotifyCharacteristic(BLECharacteristic& /*characteristic*/) {
 }
 
 bool nRF51822::canIndicateCharacteristic(BLECharacteristic& /*characteristic*/) {
-  return (this->_txBufferCount > 0);
+  return true;
 }
 
 bool nRF51822::canReadRemoteCharacteristic(BLERemoteCharacteristic& characteristic) {
