@@ -531,7 +531,7 @@ void nRF51822::poll() {
 		  ble_user_mem_block_t block;
 		  block.p_mem = this->_userMemory;
 		  block.len = BLE_ATTRIBUTE_MAX_VALUE_LENGTH;
-		  sd_ble_user_mem_reply(this->_connectionHandle, (const ble_user_mem_block_t*)&block);
+		  while(sd_ble_user_mem_reply(this->_connectionHandle, (const ble_user_mem_block_t*)&block) == NRF_ERROR_BUSY);
 	    }
 		break;
 
